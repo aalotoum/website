@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اختبار الشبكات التفاعلي</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Start Screen */
+    .start-screen {
+      text-align: center;
+    }
+
+    .start-screen h1 {
+      color: #1e1b4b;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .start-screen p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: right;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #4338ca;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: right;
+      font-family: Arial, sans-serif;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+    }
+
+    button {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(249, 115, 22, 0.4);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Quiz Screen */
+    .quiz-screen {
+      text-align: center;
+    }
+
+    .student-name {
+      color: #f97316;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #fbbf24);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-counter {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .score {
+      color: #f97316;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .question-icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+
+    .question-text {
+      color: #1e1b4b;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 25px;
+      line-height: 1.4;
+    }
+
+    .options {
+      margin-bottom: 25px;
+    }
+
+    .option {
+      background: #f5f5f5;
+      border: 2px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      text-align: right;
+      color: #333;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .option:hover:not(:disabled) {
+      border-color: #4338ca;
+      background: #f0f0f0;
+      transform: translateX(-5px);
+    }
+
+    .option.correct {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+
+    .option.wrong {
+      background: #ef4444;
+      color: white;
+      border-color: #ef4444;
+    }
+
+    .encouragement {
+      font-size: 18px;
+      color: #10b981;
+      font-weight: bold;
+      margin-top: 15px;
+      padding: 10px;
+      background: #ecfdf5;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .encouragement.show {
+      display: block;
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .next-btn {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .next-btn.show {
+      display: block;
+    }
+
+    /* Result Screen */
+    .result-screen {
+      text-align: center;
+    }
+
+    .result-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .result-title {
+      color: #1e1b4b;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .result-student-name {
+      color: #f97316;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .result-message {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    .score-box {
+      background: #f5f5f5;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .final-score {
+      font-size: 48px;
+      font-weight: bold;
+      color: #f97316;
+      margin-bottom: 10px;
+    }
+
+    .score-label {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .answers-summary {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      text-align: right;
+    }
+
+    .answer-item {
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .answer-item.correct {
+      background: #10b981;
+    }
+
+    .answer-item.wrong {
+      background: #ef4444;
+    }
+
+    .restart-btn {
+      margin-top: 20px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container"><!-- Start Screen -->
+   <div class="screen active start-screen" id="startScreen">
+    <div class="icon">
+     🌐
+    </div>
+    <h1>اختبار الشبكات</h1>
+    <p>اختبر معلوماتك عن شبكات LAN و WAN والإنترنت!</p>
+    <div class="input-group"><label>ما اسمك؟</label> <input type="text" id="studentName" placeholder="أدخل اسمك هنا..." onkeypress="if(event.key==='Enter') startQuiz()">
+    </div><button onclick="startQuiz()">ابدأ الاختبار 🚀</button>
+   </div><!-- Quiz Screen -->
+   <div class="screen quiz-screen" id="quizScreen">
+    <div class="student-name">
+     أهلاً <span id="displayName">الطالب</span>! 👋
+    </div>
+    <div class="question-counter">
+     السؤال <span id="currentQuestion">1</span> من 3 <span class="score">النقاط: <span id="scoreDisplay">0</span></span>
+    </div>
+    <div class="progress-bar">
+     <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="question-icon" id="questionIcon">
+     🖥️
+    </div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+    <div class="encouragement" id="encouragement"></div><button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ←</button>
+   </div><!-- Result Screen -->
+   <div class="screen result-screen" id="resultScreen">
+    <div class="result-icon" id="resultIcon">
+     🏆
+    </div>
+    <h2 class="result-title" id="resultTitle">ممتاز!</h2>
+    <div class="result-student-name">
+     مبروك <span id="resultName">الطالب</span>! 🎊
+    </div>
+    <p class="result-message" id="resultMessage">أجبت على جميع الأسئلة بشكل صحيح!</p>
+    <div class="score-box">
+     <div class="final-score" id="finalScore">
+      0/3
+     </div>
+     <div class="score-label">
+      إجاباتك الصحيحة
+     </div>
+    </div>
+    <div class="answers-summary" id="answersSummary"></div><button class="restart-btn" onclick="restartQuiz()">أعد الاختبار 🔄</button>
+   </div>
+  </div>
+  <script>
+    const encouragementMessages = [
+      '🌟 إجابة رائعة!',
+      '👏 أحسنت جداً!',
+      '💯 ممتاز تماماً!',
+      '🎯 إجابة صحيحة!',
+      '✨ براعة في الإجابة!',
+      '🔥 عبقري!',
+      '🎊 رائع جداً!',
+      '💪 أنت نجم!'
+    ];
+
+    const questions = [
+      {
+        icon: '🏠',
+        question: 'ما هي شبكة LAN؟',
+        options: [
+          'شبكة تربط أجهزة في مكان صغير مثل المنزل أو المدرسة',
+          'شبكة تربط دول العالم ببعضها',
+          'جهاز لتخزين الملفات',
+          'برنامج للرسم على الكمبيوتر'
+        ],
+        correct: 0
+      },
+      {
+        icon: '🌍',
+        question: 'أي من هذه الأمثلة يُعتبر شبكة WAN؟',
+        options: [
+          'أجهزة الكمبيوتر في غرفة الصف',
+          'الإنترنت الذي يربط العالم كله',
+          'طابعة متصلة بجهاز واحد',
+          'فلاش ميموري'
+        ],
+        correct: 1
+      },
+      {
+        icon: '💡',
+        question: 'ما هي الإنترنت؟',
+        options: [
+          'جهاز كمبيوتر خاص',
+          'شبكة عالمية تربط ملايين الأجهزة حول العالم',
+          'برنامج للألعاب فقط',
+          'كابل كهربائي'
+        ],
+        correct: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+    let userAnswers = [];
+    let studentName = '';
+
+    function startQuiz() {
+      studentName = document.getElementById('studentName').value.trim();
+      if (!studentName) {
+        alert('من فضلك أدخل اسمك!');
+        return;
+      }
+
+      document.getElementById('displayName').textContent = studentName;
+      showScreen('quizScreen');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+      const q = questions[currentQuestion];
+
+      document.getElementById('currentQuestion').textContent = currentQuestion + 1;
+      document.getElementById('scoreDisplay').textContent = score;
+      document.getElementById('progressFill').style.width = ((currentQuestion / 3) * 100) + '%';
+      document.getElementById('questionIcon').textContent = q.icon;
+      document.getElementById('questionText').textContent = q.question;
+      document.getElementById('encouragement').classList.remove('show');
+      document.getElementById('nextBtn').classList.remove('show');
+
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(index, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(index, btn) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQuestion];
+      const buttons = document.querySelectorAll('.option');
+
+      buttons.forEach(b => b.disabled = true);
+
+      userAnswers.push({
+        question: q.question,
+        isCorrect: index === q.correct
+      });
+
+      if (index === q.correct) {
+        btn.classList.add('correct');
+        score++;
+        document.getElementById('scoreDisplay').textContent = score;
+        showEncouragement();
+      } else {
+        btn.classList.add('wrong');
+        buttons[q.correct].classList.add('correct');
+      }
+
+      setTimeout(() => {
+        if (currentQuestion < 2) {
+          document.getElementById('nextBtn').classList.add('show');
+        } else {
+          document.getElementById('nextBtn').classList.add('show');
+          document.getElementById('nextBtn').textContent = 'عرض النتيجة 🎉';
+        }
+      }, 800);
+    }
+
+    function showEncouragement() {
+      const msg = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+      const box = document.getElementById('encouragement');
+      box.textContent = msg;
+      box.classList.add('show');
+
+      setTimeout(() => {
+        box.classList.remove('show');
+      }, 1500);
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < 3) {
+        document.getElementById('nextBtn').textContent = 'السؤال التالي ←';
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      const percentage = (score / 3) * 100;
+      let icon, title, message;
+
+      if (percentage === 100) {
+        icon = '🏆';
+        title = 'ممتاز! أنت نجم الشبكات!';
+        message = 'أجبت على جميع الأسئلة بشكل صحيح! 🌟';
+      } else if (percentage >= 66) {
+        icon = '🎉';
+        title = 'أحسنت! عمل رائع!';
+        message = 'معلوماتك عن الشبكات جيدة جداً! 💪';
+      } else if (percentage >= 33) {
+        icon = '💪';
+        title = 'جيد! استمر بالتعلم!';
+        message = 'راجع الدرس وحاول مرة أخرى! 📚';
+      } else {
+        icon = '📚';
+        title = 'لا بأس! التعلم رحلة!';
+        message = 'راجع درس الشبكات وأعد المحاولة! 🚀';
+      }
+
+      document.getElementById('resultIcon').textContent = icon;
+      document.getElementById('resultTitle').textContent = title;
+      document.getElementById('resultName').textContent = studentName;
+      document.getElementById('resultMessage').textContent = message;
+      document.getElementById('finalScore').textContent = score + '/3';
+
+      const summary = document.getElementById('answersSummary');
+      summary.innerHTML = userAnswers.map((a, i) => `
+        <div class="answer-item ${a.isCorrect ? 'correct' : 'wrong'}">
+          السؤال ${i + 1}: ${a.isCorrect ? '✅ صحيح' : '❌ خطأ'}
+        </div>
+      `).join('');
+
+      showScreen('resultScreen');
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function restartQuiz() {
+      document.getElementById('studentName').value = '';
+      currentQuestion = 0;
+      score = 0;
+      userAnswers = [];
+      studentName = '';
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('nextBtn').textContent = 'السؤال التالي ←';
+      showScreen('startScreen');
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bfc219492eae0d8',t:'MTc2ODcxODc0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
